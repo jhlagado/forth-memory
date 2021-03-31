@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run forth",
+            "label": "Run forth memory",
             "type": "shell",
-            "command": "gforth src/main.fs -e bye",
+            "command": "gforth src/main.f -e bye",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

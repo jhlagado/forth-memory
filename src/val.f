@@ -7,4 +7,3 @@ t{ val -> 3 }t
 : setval val SWAP TO val ;
 t{ 5 setval val -> 3 5 }t
 
-." hello "
