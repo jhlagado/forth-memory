@@ -27,7 +27,7 @@ depth value mark-depth
 ;
 
 ( args len -- adr)
-: new-array                             \ allocates new array from args                   
+: create-array                          \ allocates new array from args                   
   here dup >r                           \ args len adr
   cell+ swap                            \ args adr1 len
   dup ,                                 \ write len
@@ -45,10 +45,8 @@ depth value mark-depth
 ( -- adr )
 : ]_                                    \ completes literal array definition 
   depth mark-depth -                    \ mark args len
-  new-array                             \ mark adr
-  swap                                  \ adr mark
-  to mark-depth                         \ restore mark-depth
-                                        \ adr
+  create-array                          \ mark adr
+  swap to mark-depth                    \ restore mark-depth
 ;
 
 _[ 1 2 3 ]_ constant arr
