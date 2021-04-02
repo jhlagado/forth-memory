@@ -2,11 +2,13 @@
 
 depth value mark-depth
 
-: range ( adr len -- adr1 adr2 )        \ convert adr len to address range
+( adr len -- adr1 adr2 )
+: range                                 \ convert adr len to address range
     cells over +
 ;
 
-: >array ( args len adr size -- )       \ copies stack items to array                  
+( args len adr size -- )
+: >array                                \ copies stack items to array                  
   range
   cell - 
   do i ! cell negate +loop              \ count down
