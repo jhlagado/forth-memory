@@ -32,6 +32,10 @@ t{ 2 p1 -> 2 3 }t
 t{ 1 p2 -> 1 2 3 }t
 t{ 0 p3 -> 0 1 2 3 }t
 
+3 ' rot partial p10 
+2 ' p10 partial p11
+t{ 1 p11 -> 2 3 1 }t
+
 1 2 ' rot partial2 p20 
 t{ 3 p20 -> 1 2 3 }t
 
