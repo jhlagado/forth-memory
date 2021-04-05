@@ -18,7 +18,7 @@ depth value mark-depth
 ( idx adr -- val ) 
 : nth                                   \ returns nth item of array
   2dup @                                \ idx adr idx len
-  U< 0= ABORT" Range error "  
+  U< 0= ABORT" range error "  
   cell+ swap cells                      \ adr1 offset
   + @                                   \ value
 ;
