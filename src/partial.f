@@ -29,27 +29,27 @@ t{ 0 p3 -> 0 1 2 3 }t
 2 ' p10 partial p11
 t{ 1 p11 -> 2 3 1 }t
 
-0 value %pt-before
-0 value %pt-after
+0 value -pt-before
+0 value -pt-after
 
 align
-here to %pt-before 
-100 ' noop partial %pt
-here to %pt-after 
-%pt-after %pt-before - constant %pt-size
-' %pt %pt-before - constant %pt-offset
+here to -pt-before 
+100 ' noop partial -pt
+here to -pt-after 
+-pt-after -pt-before - constant -pt-size
+' -pt -pt-before - constant -pt-offset
 
 ( -- xt )
-: %pt-clone
+: -pt-clone
     align here >r                       \ save start of allocation
-    %pt-size allot
-    %pt-before r@ %pt-size cmove
-    r> %pt-offset +
+    -pt-size allot
+    -pt-before r@ -pt-size cmove
+    r> -pt-offset +
 ;
 
 ( val xt -- xt1 )
 : partial>
-    %pt-clone dup >r                         \ val xt xt1
+    -pt-clone dup >r                         \ val xt xt1
     >body swap over                         \ val body xt body
     ! cell+                                 \ val body+1
     ! r>                                    \ xt1
@@ -60,24 +60,10 @@ defer add3
 t{ 2 add3 -> 5 }t
 t{ ' add3 defer@ >body cell+ @ -> 3 }t
 
-1 2 3 ' noop partial> partial> partial pp  
-t{ 0 pp -> 0 1 2 3 }t
+1 2 3 ' noop partial> partial> partial> constant pp  
+t{ pp execute -> 1 2 3 }t
 
 ( args... len xt )
-: curry swap 0 do partial> loop ; 
-
-t{ 1 2 3 3 ' noop curry execute -> 1 2 3 }t
-
-: partial2          ( n1 n2 xt "name" -- )
-    create , , ,
-    does> 
-    2 cells +       \ addr2 
-    dup @ swap      \ n1 addr2
-    cell -          \ n1 addr1
-    dup @ swap      \ n1 n2 addr1
-    cell - @        \ n1 n2 xt
-    execute 
-;
-
-1 2 ' rot partial2 p20 
-t{ 3 p20 -> 1 2 3 }t
+: curry 0 do partial> loop ; 
+: c3 3 curry ;
+t{ 1 2 3 ' noop c3 execute .s -> 1 2 3 }t
