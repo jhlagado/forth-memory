@@ -55,6 +55,9 @@ here to -pt-after
     ! r>                                    \ xt1
 ;
 
+( args... len xt )
+: curry 0 do partial> loop ; 
+
 defer add3
 3 ' + partial> is add3                 
 t{ 2 add3 -> 5 }t
@@ -63,7 +66,5 @@ t{ ' add3 defer@ >body cell+ @ -> 3 }t
 1 2 3 ' noop partial> partial> partial> constant pp  
 t{ pp execute -> 1 2 3 }t
 
-( args... len xt )
-: curry 0 do partial> loop ; 
-: c3 3 curry ;
-t{ 1 2 3 ' noop c3 execute .s -> 1 2 3 }t
+: c3 ['] noop 3 curry ;
+t{ 1 2 3  c3 execute .s -> 1 2 3 }t
