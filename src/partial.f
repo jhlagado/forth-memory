@@ -7,6 +7,28 @@
     execute 
 ;
 
+5 ' + partial add5
+t{ 2 add5 -> 7 }t
+t{ ' add5 >body @ -> ' + }t
+t{ ' add5 >body cell+ @ -> 5 }t
+
+4 ' add5 partial add5to4
+t{ add5to4 -> 9 }t
+t{ ' add5to4 >body @ -> ' add5 }t
+t{ ' add5to4 >body cell+ @ -> 4 }t
+
+3 ' noop partial p1 
+2 ' p1 partial p2
+1 ' p2 partial p3
+
+t{ 2 p1 -> 2 3 }t
+t{ 1 p2 -> 1 2 3 }t
+t{ 0 p3 -> 0 1 2 3 }t
+
+3 ' rot partial p10 
+2 ' p10 partial p11
+t{ 1 p11 -> 2 3 1 }t
+
 0 value %pt-before
 0 value %pt-after
 
@@ -38,27 +60,13 @@ defer add3
 t{ 2 add3 -> 5 }t
 t{ ' add3 defer@ >body cell+ @ -> 3 }t
 
-5 ' + partial add5
-t{ 2 add5 -> 7 }t
-t{ ' add5 >body @ -> ' + }t
-t{ ' add5 >body cell+ @ -> 5 }t
+1 2 3 ' noop partial> partial> partial pp  
+t{ 0 pp -> 0 1 2 3 }t
 
-4 ' add5 partial add5to4
-t{ add5to4 -> 9 }t
-t{ ' add5to4 >body @ -> ' add5 }t
-t{ ' add5to4 >body cell+ @ -> 4 }t
+( args... len xt )
+: curry swap 0 do partial> loop ; 
 
-3 ' noop partial p1 
-2 ' p1 partial p2
-1 ' p2 partial p3
-
-t{ 2 p1 -> 2 3 }t
-t{ 1 p2 -> 1 2 3 }t
-t{ 0 p3 -> 0 1 2 3 }t
-
-3 ' rot partial p10 
-2 ' p10 partial p11
-t{ 1 p11 -> 2 3 1 }t
+t{ 1 2 3 3 ' noop curry execute -> 1 2 3 }t
 
 : partial2          ( n1 n2 xt "name" -- )
     create , , ,
@@ -73,4 +81,3 @@ t{ 1 p11 -> 2 3 1 }t
 
 1 2 ' rot partial2 p20 
 t{ 3 p20 -> 1 2 3 }t
-
