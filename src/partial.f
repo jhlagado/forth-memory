@@ -32,8 +32,7 @@ t{ 1 p11 -> 2 3 1 }t
 0 value -pt-before
 0 value -pt-after
 
-align
-here to -pt-before 
+align here to -pt-before 
 100 ' noop partial -pt
 here to -pt-after 
 -pt-after -pt-before - constant -pt-size
@@ -55,9 +54,6 @@ here to -pt-after
     ! r>                                    \ xt1
 ;
 
-( args... len xt )
-: curry 0 do partial> loop ; 
-
 defer add3
 3 ' + partial> is add3                 
 t{ 2 add3 -> 5 }t
@@ -66,5 +62,8 @@ t{ ' add3 defer@ >body cell+ @ -> 3 }t
 1 2 3 ' noop partial> partial> partial> constant pp  
 t{ pp execute -> 1 2 3 }t
 
-: c3 ['] noop 3 curry ;
-t{ 1 2 3  c3 execute .s -> 1 2 3 }t
+( len xt )
+: curry 0 do partial> loop ; 
+
+: c3 ['] rot 3 curry ;
+t{ 1 2 3 c3 execute .s -> 2 3 1 }t
