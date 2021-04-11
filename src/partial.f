@@ -65,30 +65,51 @@ t{ pp execute -> 1 2 3 }t
 \ t{ 1 2 3 c3 execute .s -> 2 3 1 }t
 
 
-0 value partial*-arg
-0 value partial*-proc
-: partial* 
-    to partial*-proc 
-    to partial*-arg 
+0 value arg1
+0 value arg2
+
+( n xt -- xt )                          \ returns xt of a word with one argument applied
+: >partial 
+    to arg2 
+    to arg1 
     :noname 
-    partial*-arg postpone literal 
-    partial*-proc postpone literal
+    arg1 postpone literal 
+    arg2 postpone literal
     postpone execute 
     postpone ; 
 ;
 
-marker forget-partials
+marker forget-partials                  \ mark memory cleanup point
 
 defer add10
-10 ' + partial* is add10
+10 ' + >partial is add10
 t{ 10 add10 .s -> 20 }t
 
 defer const15
-5 ' add10 partial* is const15
+5 ' add10 >partial is const15
 t{ const15 -> 15 }t
 
 defer ppp
-1 2 3 ' noop partial* partial* partial* is ppp
+1 2 3 ' noop >partial >partial >partial is ppp
 t{ ppp -> 1 2 3 }t
 
 forget-partials
+
+\ ( arg xt -- ptr )                          \ returns ptr to an array
+\ : new-closure 
+\     2 new-array 
+\ ;
+
+\ : exec 
+\     array>
+\     execute
+\ ;
+
+
+
+\ : x 
+\ marker x1
+\ dup
+\ ;
+
+\ x mx
