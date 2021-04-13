@@ -1,3 +1,12 @@
+\ a slab is a list of slab caches
+\ a slab can only store itesm of a given size
+\ variables:;
+\   slab-item-size
+\   slab-cache-size
+\ when a cache is filled a new cache is created
+\ each cache has a free-list and a free-lkist size variable.
+\ a new allocation should prefer to use a nearly full cache
+
 \ depends on tuple4
 \ this slab is for dynamically allocating tuple4 objects
 

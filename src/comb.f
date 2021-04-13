@@ -1,7 +1,27 @@
+\ ************************************************************
+\ Implementation of quotations for gforth 0.7.3
+
+0 >body constant BODY-OFFSET
+:noname ; @ constant CFA-VALUE
+variable cfa-addr
+
+\ LOCAL-EXIT is EXIT that keeps locals
+: local-exit postpone ;s ; immediate
+
+: [: ( -- )
+  \ C: build a block prefix: keep HERE in cfa-addr, compile
+  \ in CFA-VALUE
+  postpone ahead align HERE dup cfa-addr ! BODY-OFFSET allot
+  CFA-VALUE swap ! ; immediate
+
+: ;] ( E: -- xt)
+    postpone local-exit postpone then cfa-addr @
+    postpone literal ; immediate
+
+\ ************************************************************
+
 \ This is an implementation of quotations and some combinators
-\ for use with Forth. The combinators should work with most
-\ Forth systems; the quotation implementation here is gForth
-\ specific.
+\ for use with Forth by Charles Childers. 
 
 \ ************************************************************
 
@@ -41,7 +61,7 @@
 \
 \ E.g.,:
 \
-\    12  [ 3 * ]  [ 4 * ]  bi
+\    12  [: 3 * ;]  [: 4 * ;]  bi
 \
 \ Equates to:
 \
@@ -57,7 +77,7 @@
 \
 \ E.g.,:
 \
-\    2  4  [ 3 * ]  [ 5 * ]  bi*
+\    2  4  [: 3 * ;]  [: 5 * ;]  bi*
 \
 \ Equates to:
 \
@@ -72,7 +92,7 @@
 \
 \ E.g.,:
 \
-\    2  4  [ 3 * ]  bi@
+\    2  4  [: 3 * ;]  bi@
 \
 \ Equates to:
 \
@@ -86,7 +106,7 @@
 \
 \ E.g.,
 \
-\    1  [ 2 * ]  [ 3 * ]  [ 4 * ] tri
+\    1  [: 2 * ;]  [: 3 * ;]  [: 4 * ;] tri
 \
 \ Equates to:
 \
@@ -103,7 +123,7 @@
 \
 \ E.g.,
 \
-\    1  2  3  [ 5 * ]  [ 6 * ]  [ 7 * ]  tri*
+\    1  2  3  [: 5 * ;]  [: 6 * ;]  [: 7 * ;]  tri*
 \
 \ Equates to:
 \
@@ -124,43 +144,13 @@
 \
 \ E.g.,
 \
-\    1 2 3  [ 6 + ] tri@
+\    1 2 3  [: 6 + ;] tri@
 \
 \ Equates to:
 \
 \    1 6 +  2 6 +  3 6 +
 
 : tri@  dup dup tri* ;
-
-\ ************************************************************
-
-\ I've not found a portable way to implement quotations, so
-\ the implementation here is from the Dec 18, 2013 post on
-\ C.L.F. by Alexander Skobelev titled "What about code blocks
-\ (not Forth blocks)?"
-\
-\ Following some discussion in the thread, I've renamed the
-\ words to [: and ;]. In Retro and Parable these are [ and ],
-\ but those are used for other purposes in Forth.
-
-0 >body constant BODY-OFFSET
-:noname ; @ constant CFA-VALUE
-variable cfa-addr
-
-\ LOCAL-EXIT is EXIT that keeps locals
-: local-exit postpone ;s ; immediate
-
-: [: ( -- )
-  \ C: build a block prefix: keep HERE in cfa-addr, compile
-  \ in CFA-VALUE
-  postpone ahead align HERE dup cfa-addr ! BODY-OFFSET allot
-  CFA-VALUE swap ! ; immediate
-
-: ;] ( E: -- xt)
-    postpone local-exit postpone then cfa-addr @
-    postpone literal ; immediate
-
-\ ************************************************************
 
 \ When these combinators are loaded, the Forth system will
 \ behave differently: they replace standard conditionals and
@@ -170,31 +160,31 @@ variable cfa-addr
 
 : 0; dup 0= if drop rdrop then ;
 
-\ if
+\ ifte
 \ Stack:   flag  true-quote  false-quote  --
 \ Execute true-quote if flag is true, or false-quote if not.
 \
 \ E.g.,
 \
-\    true  [ 1 ]  [ 2 ]  if
+\    true  [: 1 ;]  [: 2 ;]  ifte
 \
 \ Equates to this in standard Forth:
 \
 \    true if 1 else 2 then
 
-: if rot if drop execute else nip execute then ;
+: ifte  rot if drop execute else nip execute then ;
 
 \ if-true
 \ Stack:   flag  quote  --
 \ Execute quote if flag is true
 
-: if-true  [: ;] if ;
+: if-true  [: ;] ifte ;
 
 \ if-false
 \ Stack:   flag  quote  --
 \ Execute quote if flag is false
 
-: if-false  [: ;] swap if ;
+: if-false  [: ;] swap ifte ;
 
 \ repeat
 \ Stack:   count  quote  --
@@ -215,4 +205,3 @@ variable cfa-addr
 
 : while-false
   [: begin dup dip swap -1 xor 0; drop again ;] execute drop ;
-  

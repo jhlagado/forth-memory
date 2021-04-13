@@ -2,7 +2,7 @@
 
 depth value mark-depth
 
-( args len adr size -- )
+( args adr size -- )
 : >array                                \ copies stack items to array                  
   range
   cell - 
@@ -33,6 +33,17 @@ depth value mark-depth
   r>                                    \ adr
 ;
 
+( args len -- adr)
+: new-array                             \ allocates new array from args                   
+  dup dup 1 + cells                     \ args len len bytes
+  allocate                              \ args len len adr err
+  0<> ABORT" memory allocation error "  \ args len len adr
+  swap over !                                     \ args len adr (store len) 
+  dup >r cell+ swap                     \ args adr+1 len
+  >array
+  r>                                    \ adr
+;
+
 ( -- )
 : _[                                    \ starts literal array definition 
   mark-depth                            \ push current mark-depth
@@ -42,7 +53,7 @@ depth value mark-depth
 ( -- adr )
 : ]_                                    \ completes literal array definition 
   depth mark-depth -                    \ mark args len
-  create-array                          \ mark adr
+  new-array                          \ mark adr
   swap to mark-depth                    \ restore mark-depth
 ;
 
