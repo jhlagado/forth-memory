@@ -2,29 +2,30 @@
 
 depth value mark-depth
 
-( args adr size -- )
-: >array                                \ copies stack items to array                  
-  range
-  cell - 
-  do i ! cell negate +loop              \ count down
-;  
+( args adr size -- )                    \ copies stack items to array                  
+: >array            range cell - do i ! cell negate +loop ;  
 
-( adr size -- n1 n2... )
-: array>                                \ copies array to stack                  
-  range
-  swap do i @ cell +loop 
-;    
+( adr size -- n1 n2... )                \ copies array to stack                  
+: array>            range swap do i @ cell +loop ;    
 
-( idx adr -- val ) 
-: nth                                   \ returns nth item of array
-  2dup @                                \ idx adr idx len
-  U< 0= ABORT" range error "  
-  cell+ swap cells                      \ adr1 offset
-  + @                                   \ value
-;
+( idx adr -- val )                      \ returns nth item of array
+: nth               2dup @ U< 0= ABORT" range error "  
+                    cell+ swap cells + @ ;
+
+( allot array  )
+
+: write-len         dup , ;
+: allot-cells       dup cells allot ;
+: fill-cells        here swap >array ;
+: allot-array       here >r write-len allot-cells fill-cells r> ;                                   
+  
+( create array ) 
+
+: create-array      create allot-array drop does> dup dup @ array> ;
+
 
 ( args len -- adr)
-: create-array                          \ allocates new array from args                   
+: allot-array2                          \ allocates new array from args                   
   here dup >r                           \ args len adr
   cell+ swap                            \ args adr1 len
   dup ,                                 \ write len
@@ -34,7 +35,7 @@ depth value mark-depth
 ;
 
 ( args len -- adr)
-: new-array                             \ allocates new array from args                   
+: alloc-array                             \ allocates new array from args                   
   dup dup 1 + cells                     \ args len len bytes
   allocate                              \ args len len adr err
   0<> ABORT" memory allocation error "  \ args len len adr
@@ -53,7 +54,7 @@ depth value mark-depth
 ( -- adr )
 : ]_                                    \ completes literal array definition 
   depth mark-depth -                    \ mark args len
-  new-array                          \ mark adr
+  alloc-array                          \ mark adr
   swap to mark-depth                    \ restore mark-depth
 ;
 
