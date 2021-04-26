@@ -5,15 +5,17 @@
 
 : iter-next r> r> swap >r >r ;
 
-: iter-done 
-  r> drop
-  r> drop 
-;
+: iter-done r> drop r> drop ;
 
-: producer ( n -- n' n' ) begin 100 + dup yield again ;
+: producer begin 100 + dup yield again ;
+
+variable producer-var
+
+: producer-next ;
 
 : consumer 
-  0 producer 
+  0 producer
+   
   begin dup . 1000 < while iter-next repeat drop
   ." done! "
   iter-done 
