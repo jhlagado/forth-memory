@@ -10,20 +10,20 @@
 variable producer-var
 variable producer-var2
 
-: producer-yield ." pyield " .s cr r> dup producer-var ! r> swap >r >r ;
+: producer-yield r> dup producer-var2 @ ! r> swap >r >r ;
 
-: producer begin ." ploop " .s cr  100 + dup producer-yield again ;
+: producer begin 100 + dup producer-yield again ;
 
-: producer-next ." pnext " .s cr  r> producer-var @ swap >r >r ;
+: producer-next r> producer-var2 @ @ swap >r >r ;
 
 : consumer 
   producer-var producer-var2 ! 
 
   0 producer
 
-  r> producer-var !
+  r> producer-var2 @ !
   
-  begin ." cloop " .s cr dup . 1000 < while producer-next r> drop repeat drop
+  begin dup . cr 1000 < while producer-next r> drop repeat drop
 
   ." done! "
   iter-done 
