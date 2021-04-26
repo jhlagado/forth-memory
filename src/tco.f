@@ -11,7 +11,7 @@ variable producer-var
 variable producer-var2
 
 : producer-yield                \           r2 r1  
-r> dup . cr dup producer-var !  \ r1        r2
+r> dup producer-var !           \ r1        r2
 r>                              \ r1 r2
 swap                            \ r2 r1
 >r                              \ r2        r1
@@ -31,7 +31,7 @@ swap                            \ r2 r1
   begin dup . 1000 < while 
   
   producer-next 
-  r> dup . cr drop
+  r> drop 
 
   repeat drop
   ." done! "
