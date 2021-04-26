@@ -7,16 +7,33 @@
 
 : iter-done r> drop r> drop ;
 
-: producer begin 100 + dup yield again ;
-
 variable producer-var
+variable producer-var2
 
-: producer-next ;
+: producer-yield                \           r2 r1  
+r> dup . cr dup producer-var !  \ r1        r2
+r>                              \ r1 r2
+swap                            \ r2 r1
+>r                              \ r2        r1
+>r                              \           r1 r2 
+;
+
+: producer begin 100 + dup producer-yield again ;
+
+: producer-next r> producer-var @ swap >r >r ;
 
 : consumer 
   0 producer
-   
-  begin dup . 1000 < while iter-next repeat drop
+
+  r> producer-var !
+  producer-var ? cr cr
+
+  begin dup . 1000 < while 
+  
+  producer-next 
+  r> dup . cr drop
+
+  repeat drop
   ." done! "
   iter-done 
 ;
