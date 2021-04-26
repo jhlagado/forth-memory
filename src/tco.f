@@ -17,7 +17,7 @@ variable producer-var2
 : producer-next ." pnext " .s cr  r> producer-var @ swap >r >r ;
 
 : consumer 
-  producer-var  
+  producer-var producer-var2 ! 
 
   0 producer
 
@@ -25,7 +25,6 @@ variable producer-var2
   
   begin ." cloop " .s cr dup . 1000 < while producer-next r> drop repeat drop
 
-  drop
   ." done! "
   iter-done 
 ;
